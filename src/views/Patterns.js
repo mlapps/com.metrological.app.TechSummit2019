@@ -1,4 +1,5 @@
 import App from "../App.js";
+import RoundedRectangleShader from "../shaders/RoundedRectangleShader.js";
 
 export default class Patterns extends lng.Component {
     static _template(){
@@ -33,6 +34,10 @@ export default class Patterns extends lng.Component {
     _handleUp(){
         if(this._index > 0){
             this._setIndex(--this._index);
+        }else{
+            // by explicitly returning false
+            // we let the event bubble up
+            return false;
         }
     }
 
@@ -40,6 +45,12 @@ export default class Patterns extends lng.Component {
         if(this._index < this.patterns.length - 1){
             this._setIndex(++this._index);
         }
+    }
+
+    // child parent communication
+    // docs: https://webplatformforembedded.github.io/Lightning/docs/components/communication/fireancestors
+    _handleEnter(){
+        this.fireAncestors('$sequence',{sequence: this.activePattern.pattern});
     }
 
     _setIndex(index){
@@ -89,22 +100,34 @@ class Pattern extends lng.Component{
 
     _focus(){
         this.setSmooth("alpha",1);
+        this.setSmooth("scale",1.1);
     }
 
     _unfocus(){
         this.setSmooth("alpha",0.4);
+        this.setSmooth("scale",1);
     }
 }
 
 class Item extends lng.Component{
     static _template(){
         return {
-            rect: true, w:80, h: 80
+            rtt: true, shader: {type: RoundedRectangleShader, radius: 40},
+            rect: true, w:80, h:80, alpha: 1, scale : 1,
+            Overlay: {
+                rtt: true, shader: {type: RoundedRectangleShader, radius: 30}, color: 0x20000000,
+                rect: true, w: 60, h: 60, mount: .5, x: 40, y: 40
+            },
+            Label: {
+                mount: .5, x: 40, y: 44, color: 0x90ffffff,
+                text: {fontSize: 42, fontFace: "Black"}
+            }
         }
     }
 
     set pin(v){
-        this.color = App.COLORS[App.PINS[v]];
+        this.colorTop = App.COLORS[App.PINS[v]];
+        this.colorBottom = App.COLORS[App.PINS[v]] - 0x40ffffff;
     }
 
 }

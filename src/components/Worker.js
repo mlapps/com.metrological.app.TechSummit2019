@@ -2,8 +2,8 @@ export default class Worker extends lng.Component {
 
     static _template(){
         return {
-            Status:{
-                text:{text:'running task 0'}
+            Status:{ alpha: 0.2,
+                text:{text:'running task 0', fontFace: "Regular"}
             }
         }
     }
@@ -24,6 +24,8 @@ export default class Worker extends lng.Component {
 
     start(sequence){
         this._sequence = sequence;
+        this._amount = sequence.length;
+
         this._setState("Working");
     }
 
@@ -42,6 +44,7 @@ export default class Worker extends lng.Component {
 
                     // set new sequence
                     this._sequence = sequence;
+                    this._amount = sequence.length;
 
                     // begin running the tasks
                     // todo: reset, turn off active led
@@ -58,13 +61,21 @@ export default class Worker extends lng.Component {
                     },this._speed);
                 }
                 runTask(pin){
+                    const current = this._amount - this._sequence.length;
+
+                    // output to status
+                    this.tag("Status").text.text = `running task ${current} / ${this._amount}`;
+
                     // if we have pin activity
                     // we turn it off
                     if(this._activePin){
                         this._thunderjs.call("IOConnector",`pin@${pin}`, {params:0});
                     }
 
+                    // store the active pin
                     this._activePin = pin;
+
+                    // call thunder nano service
                     this._thunderjs.call("IOConnector",`pin@${pin}`, 1);
 
                     // schedule next
