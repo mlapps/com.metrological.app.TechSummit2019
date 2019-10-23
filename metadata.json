@@ -1,0 +1,6 @@
+{
+  "name": "TechSummit",
+  "identifier": "com.metrological.app.TechSummit2019",
+  "version": "1.0.0",
+  "icon": "./static/icon.png"
+}
