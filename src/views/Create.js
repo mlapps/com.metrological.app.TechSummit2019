@@ -14,9 +14,10 @@ export default class Create extends lng.Component {
                 Items: {x: 20, y: 20}
             },
             Save:{
-                rect: true, w:200, h:90, alpha:0.4, y: 600,
-                Label:{ mount:0.5, x:100, y:45,
-                    text:{text:'STORE', fontFace: "Regular", textColor: 0xff000000}
+                rect: true, w:200, h:90, y: 600, color: 0xaaffffff,
+                Label:{
+                    mount:0.5, x:100, y:48, color: 0x90121212,
+                    text:{text:'STORE', fontFace: "Black"}
                 }
             }
         }
@@ -127,15 +128,17 @@ export default class Create extends lng.Component {
             class Save extends this{
                 $enter(){
                     this.tag("Save").patch({
-                        smooth:{
-                            alpha:1, scale:1.2
+                        smooth: {color: 0xffffffff},
+                        Label: {
+                            smooth: {color: 0xff121212}
                         }
                     });
                 }
                 $exit(){
                     this.tag("Save").patch({
-                        smooth:{
-                            alpha:0.4, scale:1
+                        smooth: {color: 0xaaffffff},
+                        Label: {
+                            smooth: {color: 0xff121212}
                         }
                     });
                 }
