@@ -61,7 +61,7 @@ export default class Worker extends lng.Component {
                     // if we have pin activity
                     // we turn it off
                     if(this._activePin){
-                        this._thunderjs.call("IOConnector",`pin@${pin}`, 0);
+                        this._thunderjs.call("IOConnector",`pin@${pin}`, {params:0});
                     }
 
                     this._activePin = pin;
