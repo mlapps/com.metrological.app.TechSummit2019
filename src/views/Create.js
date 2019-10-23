@@ -1,21 +1,22 @@
 import App from "../App.js";
+import RoundedRectangleShader from "../shaders/RoundedRectangleShader.js";
 
 export default class Create extends lng.Component {
     static _template() {
         return {
-            Buttons: {
-
-            },
+            Buttons: {},
             Title:{
-                y:280, text:{text:'New Sequence'}
+                y:240, text:{text:'Sequence', fontFace: "Regular"}
             },
             Pattern:{
-                y: 370
+                rtt: true, shader: {type: RoundedRectangleShader, radius: 20},
+                y: 330, w: 1710, h: 200, rect: true, color: 0x20000000,
+                Items: {x: 20, y: 20}
             },
             Save:{
-                rect: true, w:200, h:90, alpha:0.4, y: 500,
+                rect: true, w:200, h:90, alpha:0.4, y: 600,
                 Label:{ mount:0.5, x:100, y:45,
-                    text:{text:'STORE', textColor: 0xff000000}
+                    text:{text:'STORE', fontFace: "Regular", textColor: 0xff000000}
                 }
             }
         }
@@ -38,8 +39,9 @@ export default class Create extends lng.Component {
                 type: Button,
                 label: el.label,
                 pin: el.pin,
-                color: App.COLORS[el.label],
-                x: idx * 180
+                colorTop: App.COLORS[el.label],
+                colorBottom: App.COLORS[el.label] - 0x30ffffff,
+                x: idx * 200
             };
         });
     }
@@ -53,9 +55,7 @@ export default class Create extends lng.Component {
 
     }
 
-    // will be called when ok button is pressed on remote control
-    // and this component has focus
-    _handleEnter(){
+    $addTask(){
         const {pin, label} = this.activeButton;
         const task = {
             pin, label
@@ -66,8 +66,8 @@ export default class Create extends lng.Component {
     }
 
     _createTask(task){
-        this.tag("Pattern").childList.a({
-            type: Item, task, x: this._sequence.length * 90
+        this.tag("Items").childList.a({
+            type: Item, task, x: this._sequence.length * 94, label: this._sequence.length
         });
 
         this._sequence.push(task);
@@ -153,8 +153,19 @@ export default class Create extends lng.Component {
 class Button extends lng.Component {
     static _template() {
         return {
-            rect: true, w: 150, h: 150, alpha:0.3
+            rtt: true, shader: {type: RoundedRectangleShader, radius: 75},
+            rect: true, w: 150, h: 150,
+            Overlay: {
+                rtt: true, shader: {type: RoundedRectangleShader, radius: 75}, color: 0x20000000,
+                rect: true, w: 130, h: 130, mount: .5, x: 75, y: 75
+            }
         };
+    }
+
+    _init() {
+        this._enterAnimation = this.animation({duration: .3, actions: [
+            {t: '', rv: 1, p: 'scale', v: {0: 1.2, .5: 1.1, 1: 1.2}},
+        ]});
     }
 
     get label(){
@@ -177,7 +188,6 @@ class Button extends lng.Component {
     // docs: https://webplatformforembedded.github.io/Lightning/docs/components/overview#component-events
     _focus(){
         // smooth each individual property
-        this.setSmooth("alpha", 1);
         this.setSmooth("scale", 1.2)
     }
 
@@ -187,25 +197,57 @@ class Button extends lng.Component {
         // patch a part of the render tree
         this.patch({
             smooth:{
-                alpha: 0.3,
                 scale:1
             }
         });
+
+        this._enterAnimation.stop();
+    }
+
+    // will be called when ok button is pressed on remote control
+    // and this component has focus
+    _handleEnter() {
+        this._enterAnimation.start();
+        this.fireAncestors("$addTask");
     }
 }
 
 class Item extends lng.Component {
     static _template(){
         return {
-            rect: true, w:80, h:80
+            rtt: true, shader: {type: RoundedRectangleShader, radius: 40},
+            rect: true, w:80, h:80, alpha: .1, scale : 0.1, y: 40,
+            Overlay: {
+                rtt: true, shader: {type: RoundedRectangleShader, radius: 30}, color: 0x20000000,
+                rect: true, w: 60, h: 60, mount: .5, x: 40, y: 40
+            },
+            Label: {
+                mount: .5, x: 40, y: 44, color: 0x90ffffff,
+                text: {fontSize: 42, fontFace: "Black"}
+            }
         }
+    }
+
+    _active() {
+        this.patch({
+           smooth: {
+               scale: 1, alpha: 1, y: [0, {duration: .6}]
+           }
+        });
     }
 
     set task(v){
         this._task = v;
         const {label} = v;
 
-        this.color = App.COLORS[label];
+        this.colorTop = App.COLORS[label];
+        this.colorBottom = App.COLORS[label] - 0x40ffffff;
+    }
+
+    set label(v) {
+        this.tag("Label").patch({
+           text: {text: v}
+        });
     }
 
     get task(){

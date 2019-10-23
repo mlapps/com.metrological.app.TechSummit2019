@@ -14,14 +14,16 @@ export default class App extends ux.App {
     // Provide app specific fonts
     static getFonts() {
         return [
-        ];
+            {family: 'Black', url: App.getPath('fonts/Roboto-Black.ttf'), descriptors: {}},
+            {family: 'Regular', url: App.getPath('fonts/Roboto-Regular.ttf'), descriptors: {}}
+        ]
     }
 
     // Define the render tree:
     // docs: https://webplatformforembedded.github.io/Lightning/docs/renderEngine/template
     static _template() {
         return {
-            rect: true, color: 0xff000000, w:1920, h:1080,
+            rect: true, colorTop: 0xff282828, colorBottom: 0xff181818, w:1920, h:1080,
             Profile:{
                 type: Profile, x:100, y:50
             },
@@ -29,7 +31,7 @@ export default class App extends ux.App {
                 type: Patterns
             },
             Create:{
-                type: Create, y:200, x:100
+                type: Create, y:300, x:100
             },
             Worker:{
                 type: Worker, x:1550, y:50, alpha:2,
@@ -102,16 +104,16 @@ export default class App extends ux.App {
 }
 
 App.COLORS = {
-    RED: 0xff9a0412,
-    YELLOW: 0xffc8c10c,
-    GREEN: 0xff459c27
+    RED: 0xfff26458,
+    YELLOW: 0xfff8be58,
+    GREEN: 0xff5ac45a
 };
 
 App.PINS = {
     9: "RED",
     10: "YELLOW",
     11: "GREEN"
-}
+};
 
 
 App.SEQUENCES = [

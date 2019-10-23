@@ -3,12 +3,12 @@ export default class Profile extends lng.Component {
         return {
             User:{
                 text:{
-                    text: 'Welkom User'
+                    text: 'Welkom User', fontFace: "Regular"
                 }
             },
-            Time:{ y:50,
+            Time:{ y:54, color: 0x80ffffff,
                 text:{
-                    text: '00:00:00'
+                    text: '00:00:00', fontFace: "Black", fontSize: 48
                 }
             }
         }

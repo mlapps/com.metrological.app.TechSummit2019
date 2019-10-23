@@ -3,7 +3,7 @@ export default class Worker extends lng.Component {
     static _template(){
         return {
             Status:{
-                text:{text:'running task 0'}
+                text:{text:'running task 0', fontFace: "Regular"}
             }
         }
     }
